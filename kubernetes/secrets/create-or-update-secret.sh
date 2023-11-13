@@ -4,10 +4,11 @@
 NAMESPACE="default"
 SECRET_NAME=""
 SECRET_KEY=""
+SECRET_VALUE=""
 FORCE_UPDATE=false
 
 # Parse options
-while getopts ":n:s:k:f" opt; do
+while getopts ":n:s:k:v:f" opt; do
   case $opt in
     n)
       NAMESPACE="$OPTARG"
@@ -17,6 +18,9 @@ while getopts ":n:s:k:f" opt; do
       ;;
     k)
       SECRET_KEY="$OPTARG"
+      ;;
+    v)
+      SECRET_VALUE="$OPTARG"
       ;;
     f)
       FORCE_UPDATE=true
@@ -33,50 +37,48 @@ while getopts ":n:s:k:f" opt; do
 done
 
 # Validate required arguments
-if [ -z "$SECRET_NAME" ] || [ -z "$SECRET_KEY" ]; then
-    echo "Both SECRET_NAME (-s) and SECRET_KEY (-k) arguments are required."
+if [ -z "$SECRET_NAME" ] || [ -z "$SECRET_KEY" ] || [ -z "$SECRET_VALUE" ]; then
+    echo "Both SECRET_NAME (-s), SECRET_KEY (-k), and SECRET_VALUE (-v) arguments are required."
     exit 1
 fi
 
-# Generate a new password
-PASSWORD=$(openssl rand -base64 12)
-
-# Function to check if the secret already exists
 secret_exists() {
     kubectl get secret "$SECRET_NAME" --namespace "$NAMESPACE" &> /dev/null
     return $?
 }
 
-# Function to create the secret
+key_exists() {
+    local key_value
+    key_value=$(kubectl get secret "$SECRET_NAME" --namespace="$NAMESPACE" -o jsonpath="{.data.${SECRET_KEY}}" 2>/dev/null)
+    [[ -n "$key_value" ]]
+}
+
 create_secret() {
     echo "Creating new secret $SECRET_NAME in namespace $NAMESPACE"
     kubectl create secret generic "$SECRET_NAME" \
-      --from-literal="$SECRET_KEY=$PASSWORD" \
+      --from-literal="$SECRET_KEY=$SECRET_VALUE" \
       --namespace "$NAMESPACE" \
       --save-config
 }
 
-# Function to update the secret
 update_secret() {
+    if key_exists && [ "$FORCE_UPDATE" = false ]; then
+        echo -e "\033[1;33mNotice: \033[0;0mKey $SECRET_KEY already exists in secret $SECRET_NAME. Use -f to force update."
+        return
+    fi
+
     echo "Updating existing secret $SECRET_NAME in namespace $NAMESPACE"
-    kubectl create secret generic "$SECRET_NAME" \
-      --from-literal="$SECRET_KEY=$PASSWORD" \
-      --namespace "$NAMESPACE" \
-      --dry-run=client -o yaml | kubectl apply -f -
+    kubectl patch secret "$SECRET_NAME" \
+      --namespace="$NAMESPACE" \
+      --type='json' \
+      -p="[{\"op\": \"add\", \"path\": \"/data/$SECRET_KEY\", \"value\": \"$(echo -n "$SECRET_VALUE" | base64)\"}]"
 }
 
 # Main logic
 if secret_exists; then
-    if [ "$FORCE_UPDATE" = true ]; then
-        # If force flag is set, update the secret
-        update_secret
-    else
-        # If force flag is not set, do not update
-        echo -e "\033[1;33mNotice: \033[0;0mSecret $SECRET_NAME already exists. Use -f to force update."
-    fi
+    update_secret
 else
-    # If secret does not exist, create it
     create_secret
 fi
 
-echo "Secret setup complete."
+echo "Secret setup finished."

@@ -105,4 +105,4 @@ postgresql:
         username: "service"
         existingSecret: "user-management-service-db"
         secretKeys:
-          userPasswordKey: "password"
+          userPasswordKey: "user-password"
