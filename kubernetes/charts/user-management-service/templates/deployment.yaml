@@ -42,12 +42,12 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
-              port: http
+              path: {{ .Values.app.livenessProbeEndpoint }}
+              port: {{ .Values.app.podPort }}
           readinessProbe:
             httpGet:
-              path: /
-              port: http
+              path: {{ .Values.app.readinessProbeEndpoint }}
+              port: {{ .Values.app.podPort }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
