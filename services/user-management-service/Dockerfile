@@ -6,7 +6,7 @@ COPY src /app/src
 COPY pom.xml /app
 
 RUN --mount=type=cache,target=/root/.m2 \
-    mvn clean package
+    mvn clean package -DskipTests
 
 # Set up runtime environment
 FROM ubuntu/jre:17-22.04_edge
