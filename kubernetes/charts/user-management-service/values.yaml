@@ -18,6 +18,17 @@ app:
   livenessProbeEndpoint: /actuator/health/liveness
   readinessProbeEndpoint: /actuator/health/readiness
   podPort: 8080
+  env:
+    - name: SPRING_DATASOURCE_URL
+      value: "jdbc:postgresql://user-management-service-db:5432/user-management"
+    - name: SPRING_DATASOURCE_USERNAME
+      value: "service"
+  envSecret:
+    - name: SPRING_DATASOURCE_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: user-management-service-db
+          key: user-password
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -103,6 +114,7 @@ tolerations: []
 affinity: {}
 
 postgresql:
+  nameOverride: "db"
   global:
     postgresql:
       auth:

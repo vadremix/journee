@@ -40,6 +40,16 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          env:
+            {{- range .Values.app.env }}
+            - name: {{ .name }}
+              value: {{ .value }}
+            {{- end }}
+            {{- range .Values.app.envSecret }}
+            - name: {{ .name }}
+              valueFrom:
+                {{- toYaml .valueFrom | nindent 16 }}
+            {{- end }}
           livenessProbe:
             httpGet:
               path: {{ .Values.app.livenessProbeEndpoint }}
