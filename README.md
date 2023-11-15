@@ -25,15 +25,32 @@ At this stage, installation is only partially automated.  The following steps ar
    2. Run `docker buildx build . -t journee/<servcie name>:latest`. Replace <service name> with the name of the service, e.g. user-management-service
 4. Manually navigate to each service's Helm chart directory (within `./kubernetes/charts`) and execute `helm install <service name> .`
 
-If you're using minikube, you can run `minikube dashboard` as a convenient way to view the cluster and services.
+The Kubernetes cluster needs to have ingress support. When using minikube, ingress can be enabled with `minikube addons enable ingress`.
+
+With minikube, running `minikube dashboard` is a convenient way to view the cluster and services.
 
 ## Running tests
 There is no unified way of running tests at this time. Each service has its own test suite and instructions for running them are or will be in the service's README.md file.
 
+## Dev utilities
+### pgadmin4
+There is a script that can be used to set up pgadmin4:  
+`./kubernetes/dev-utilities/pgadmin4/install.sh -p <password>`  
+
+The `-p` flag is optional. If not provided, a random password will be generated and printed to the console.
+
+There is no persistence for pgadmin4. If the password is lost, run `helm uninstall pgadmin4` and then run the installation script again. This will create a new instance of pgadmin4 with a new password.
+
+It is also necessary to add `pgadmin.local` to the local `hosts` file. With minikube and Linux, this can be done with `echo "$(minikube ip) pgadmin.local" | sudo tee -a /etc/hosts`.
+
 ## What's currently working
-Not much:
 - user-management-service is built with a multi-stage Dockerfile
-- user-management-service runs in a pod and responds to internal http requests
+- user-management-service and its database are deployed with Helm
+- user-management-service connects to its database
+
+Near term goals:
+- user-management-service has a basic authentication system
+- user-management-service is accessible through the API gateway
 
 ## API Gateway
 The API gateway being used is Emissary-ingress. Routing is not currently set up.
