@@ -37,7 +37,15 @@ There is no unified way of running tests at this time. Each service has its own 
 There is a script that can be used to set up pgadmin4:  
 `./kubernetes/dev-utilities/pgadmin4/install.sh -p <password>`  
 
-The `-p` flag is optional. If not provided, a random password will be generated and printed to the console.
+The `-p` flag is optional. If not provided, a random password will be generated.
+
+When the install script finishes, it will print out:
+- username: pgadmin@local.dev
+- password: <password>
+
+These credentials are for pgadmin4 itself. Connection information for each service's database should be set up, but you 
+need to retrieve the password for each. For example:  
+`kubectl get secret user-management-service-db -o jsonpath=\"{.data.postgres-password}\" | base64 --decode`
 
 There is no persistence for pgadmin4. If the password is lost, run `helm uninstall pgadmin4` and then run the installation script again. This will create a new instance of pgadmin4 with a new password.
 
