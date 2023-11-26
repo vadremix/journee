@@ -21,7 +21,11 @@ public class UserService {
     public User saveUser(User user) {
         user.setPassword(encodePassword(user.getPassword()));
 
-        return userRepository.save(user);
+        try {
+            return userRepository.save(user);
+        } catch (Exception|Error e) {
+            throw new RuntimeException("Username or email already exists");
+        }
     }
 
     private String encodePassword(String password) {

@@ -10,3 +10,6 @@ There are a lot of potential cases where this could be undesirable, but for the 
 ## User password limitations
 While passwords are encoded, password strength is not enforced. This is a potential security concern, but for the purposes
 of this project, it is sufficient.
+
+## runtimeException handling
+Always returning the runtimeException message is a potential security concern, and a custom exception should be used instead.

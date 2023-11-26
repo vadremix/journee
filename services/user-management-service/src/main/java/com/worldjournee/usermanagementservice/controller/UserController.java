@@ -22,11 +22,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {;
-        try {
             User savedUser = userService.saveUser(user);
             return ResponseEntity.ok(savedUser);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
     }
 }
