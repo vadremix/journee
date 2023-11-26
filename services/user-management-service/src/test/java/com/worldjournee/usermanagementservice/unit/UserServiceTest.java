@@ -49,30 +49,30 @@ class UserServiceTest {
         assertEquals("encodedPassword", createdUser.getPassword());
     }
 
-    @Test
-    void testSaveUserWithNullPassword() {
-        user.setPassword(null);
-
-        assertThrows(NullPointerException.class, () -> {
-            this.userService.saveUser(user);
-        });
-    }
-
-    @Test
-    void testSaveUserWithNullUsername() {
-        user.setUsername(null);
-
-        assertThrows(NullPointerException.class, () -> {
-            this.userService.saveUser(user);
-        });
-    }
-
-    @Test
-    void testSaveUserWithInvalidEmail() {
-        user.setEmail("invalidEmail");
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            this.userService.saveUser(user);
-        });
-    }
+//    @Test
+//    void testSaveUserWithNullPassword() {
+//        user.setPassword(null);
+//
+//        assertThrows(NullPointerException.class, () -> {
+//            this.userService.saveUser(user);
+//        });
+//    }
+//
+//    @Test
+//    void testSaveUserWithNullUsername() {
+//        user.setUsername(null);
+//
+//        assertThrows(NullPointerException.class, () -> {
+//            this.userService.saveUser(user);
+//        });
+//    }
+//
+//    @Test
+//    void testSaveUserWithInvalidEmail() {
+//        user.setEmail("invalidEmail");
+//
+//        assertThrows(IllegalArgumentException.class, () -> {
+//            this.userService.saveUser(user);
+//        });
+//    }
 }

@@ -1,6 +1,9 @@
 package com.worldjournee.usermanagementservice.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,12 +16,17 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NotEmpty(message = "Username cannot be empty")
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Email(message = "Email should be valid")
+    @NotEmpty(message = "Email cannot be empty")
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Size(min = 12, message = "Password should be at least 12 characters long")
+    @NotEmpty(message = "Password cannot be empty")
     @Column(nullable = false)
     private String password;
 
