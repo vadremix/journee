@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    password: test
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+  servlet:
+    # disable uploads
+    multipart:
+      enabled: false
+      max-file-size: -1
+      max-request-size: -1
