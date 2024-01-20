@@ -25,8 +25,6 @@ At this stage, installation is only partially automated.  The following steps ar
    2. Run `docker buildx build . -t journee/<servcie name>:latest`. Replace <service name> with the name of the service, e.g. user-management-service
 4. Manually navigate to each service's Helm chart directory (within `./kubernetes/charts`) and execute `helm install <service name> .`
 
-The Kubernetes cluster needs to have ingress support. When using minikube, ingress can be enabled with `minikube addons enable ingress`.
-
 With minikube, running `minikube dashboard` is a convenient way to view the cluster and services.
 
 ## Running tests

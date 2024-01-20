@@ -21,6 +21,7 @@ done
 helm repo add runix https://helm.runix.net
 helm install pgadmin4 runix/pgadmin4 \
     --set ingress.enabled=true \
+    --set ingress.ingressClassName=ambassador \
     --set ingress.hosts[0].host=pgadmin.local \
     --set ingress.hosts[0].paths[0].path=/ \
     --set ingress.hosts[0].paths[0].pathType=Prefix \
